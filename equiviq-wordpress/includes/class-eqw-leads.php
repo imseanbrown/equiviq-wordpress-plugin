@@ -44,7 +44,7 @@ final class EQW_Leads {
     }
 
     public static function menu(): void {
-        add_submenu_page('equiviq-wordpress', 'Knowledge', 'Knowledge', 'manage_options', 'equiviq-wordpress', array('EQW_Admin', 'page'));
+        add_submenu_page('equiviq-wordpress', 'Knowledge', 'Knowledge', 'manage_options', 'equiviq-knowledge', array('EQW_Admin', 'knowledge_page'));
         add_submenu_page('equiviq-wordpress', 'Lead Generation', 'Lead Generation', 'manage_options', 'equiviq-leads', array(__CLASS__, 'admin_page'));
     }
 
@@ -77,7 +77,7 @@ final class EQW_Leads {
         $ctas = self::ctas();
         $edit = sanitize_key(wp_unslash($_GET['edit'] ?? ''));
         $cta = $ctas[$edit] ?? array();
-        echo '<div class="wrap"><h1>Equiviq Lead Generation</h1><p>Configure a call to action, then place its shortcode on a page. WordPress hosts the form and forwards submissions to Equiviq using the saved Knowledge API key.</p>';
+        echo '<div class="wrap"><h1>Equiviq Lead Generation</h1><p>Configure a call to action, then place its shortcode on a page. WordPress hosts the form and forwards submissions to Equiviq using the saved Equiviq API key.</p>';
         if (isset($_GET['saved'])) { echo '<div class="notice notice-success"><p>Call to action saved.</p></div>'; }
         echo '<h2>Calls to action</h2><table class="widefat striped"><thead><tr><th>Name</th><th>Shortcode</th><th>Actions</th></tr></thead><tbody>';
         foreach ($ctas as $id => $entry) {

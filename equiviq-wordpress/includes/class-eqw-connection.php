@@ -69,6 +69,18 @@ final class EQW_Connection {
         return true;
     }
 
+    public static function save_primary_page(int $primary_page): void {
+        $settings = self::settings();
+        $old_primary = (int) ($settings['primary_page'] ?? 0);
+        if ($old_primary && $old_primary !== $primary_page) {
+            $old_path = trim(get_page_uri($old_primary), '/');
+            if ($old_path !== '') { $settings['legacy_paths'] = array_values(array_unique(array_merge((array) ($settings['legacy_paths'] ?? array()), array($old_path)))); }
+        }
+        $settings['primary_page'] = $primary_page;
+        $settings['primary_path'] = $primary_page ? trim(get_page_uri($primary_page), '/') : '';
+        update_option(self::OPTION, $settings, false);
+    }
+
     public static function request(string $path = '', string $query = '', string $method = 'GET', ?array $data = null, bool $cache = true) {
         $base = self::api_url();
         $key = self::api_key();

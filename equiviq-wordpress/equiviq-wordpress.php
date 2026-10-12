@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Equiviq for Wordpress
  * Description: Wordpress CMS integration with Equiviq core modules
- * Version: 0.2.2
+ * Version: 0.2.3
  * Requires at least: 6.4
  * Requires PHP: 8.1
  * Author: Equiviq
@@ -12,7 +12,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('EQW_VERSION', '0.2.2');
+define('EQW_VERSION', '0.2.3');
 define('EQW_PATH', plugin_dir_path(__FILE__));
 define('EQW_URL', plugin_dir_url(__FILE__));
 
@@ -27,6 +27,7 @@ add_action('init', array('EQW_Guides', 'init'));
 add_action('init', array('EQW_Leads', 'init'));
 add_filter('update_plugins_github.com', array('EQW_Updater', 'check'), 10, 4);
 add_action('admin_menu', array('EQW_Admin', 'menu'));
+add_action('admin_head', array('EQW_Admin', 'menu_icon_style'));
 add_action('admin_menu', array('EQW_Leads', 'menu'));
 add_action('admin_post_eqw_save_cta', array('EQW_Leads', 'save_cta'));
 add_action('admin_post_eqw_delete_cta', array('EQW_Leads', 'delete_cta'));
@@ -39,6 +40,7 @@ add_action('eqw_retry_leads', array('EQW_Leads', 'retry'));
 add_action('eqw_retry_leads_once', array('EQW_Leads', 'retry'));
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), array('EQW_Admin', 'plugin_links'));
 add_action('admin_post_eqw_save_settings', array('EQW_Admin', 'save'));
+add_action('admin_post_eqw_save_primary_page', array('EQW_Admin', 'save_primary_page'));
 add_action('admin_post_eqw_test_connection', array('EQW_Admin', 'test'));
 add_action('admin_post_eqw_save_knowledge', array('EQW_Guides', 'save_preset'));
 add_action('admin_post_eqw_delete_knowledge', array('EQW_Guides', 'delete_preset'));
