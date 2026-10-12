@@ -79,7 +79,7 @@ final class EQW_Leads {
         $cta = $ctas[$edit] ?? array();
         echo '<div class="wrap"><h1>Equiviq Lead Generation</h1><p>Configure a call to action, then place its shortcode on a page. WordPress hosts the form and forwards submissions to Equiviq using the saved Equiviq API key.</p>';
         if (isset($_GET['saved'])) { echo '<div class="notice notice-success"><p>Call to action saved.</p></div>'; }
-        echo '<h2>Calls to action</h2><table class="widefat striped"><thead><tr><th>Name</th><th>Shortcode</th><th>Actions</th></tr></thead><tbody>';
+        echo '<h2>Calls to action</h2><table class="widefat striped"><thead><tr><th>Heading</th><th>Shortcode</th><th>Actions</th></tr></thead><tbody>';
         foreach ($ctas as $id => $entry) {
             echo '<tr><td>' . esc_html($entry['title']) . '</td><td><code>[equiviq_lead id="' . esc_attr($id) . '"]</code></td><td><a class="button" href="' . esc_url(add_query_arg('edit', $id, admin_url('admin.php?page=equiviq-leads'))) . '">Edit</a> ';
             echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="display:inline">';
@@ -89,9 +89,10 @@ final class EQW_Leads {
         echo '</tbody></table><h2>' . ($edit ? 'Edit' : 'Add') . ' call to action</h2><form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
         wp_nonce_field('eqw_save_cta');
         echo '<input type="hidden" name="action" value="eqw_save_cta"><input type="hidden" name="id" value="' . esc_attr($edit) . '"><table class="form-table"><tbody>';
-        foreach (array('title' => 'Name', 'acquisition_source' => 'Acquisition Source/Campaign', 'privacy_url' => 'Privacy policy URL override', 'success_message' => 'Success message', 'error_message' => 'Error message', 'queued_message' => 'Queued message') as $key => $label) {
+        foreach (array('title' => 'Heading', 'acquisition_source' => 'Acquisition Source/Campaign', 'privacy_url' => 'Privacy policy URL override', 'success_message' => 'Success message', 'error_message' => 'Error message', 'queued_message' => 'Queued message') as $key => $label) {
             echo '<tr><th><label for="eqw-' . esc_attr($key) . '">' . esc_html($label) . '</label></th><td><input class="regular-text" id="eqw-' . esc_attr($key) . '" name="' . esc_attr($key) . '" value="' . esc_attr($cta[$key] ?? '') . '" ' . ($key === 'title' ? 'required' : '') . '></td></tr>';
         }
+        echo '<tr><th><label for="eqw-cta-text">CTA text</label></th><td><textarea class="large-text" id="eqw-cta-text" name="cta_text" rows="5" maxlength="2000">' . esc_textarea($cta['cta_text'] ?? '') . '</textarea><p class="description">Optional text shown below the heading and above the form fields.</p></td></tr>';
         foreach (self::FIELDS as $field) {
             $visible = $field === 'email' || !empty($cta['fields'][$field]['visible']);
             $required = $field === 'email' || $field === 'organization' || !empty($cta['fields'][$field]['required']);
@@ -130,7 +131,7 @@ final class EQW_Leads {
         }
         $fields['phone_country'] = array('label' => substr(sanitize_text_field($posted['phone_country']['label'] ?? ''), 0, 100));
         $ctas = self::ctas();
-        $ctas[$id] = array('title' => $title, 'fields' => $fields, 'privacy_url' => $privacy,
+        $ctas[$id] = array('title' => $title, 'cta_text' => substr(sanitize_textarea_field(wp_unslash($_POST['cta_text'] ?? '')), 0, 2000), 'fields' => $fields, 'privacy_url' => $privacy,
             'acquisition_source' => substr(sanitize_text_field(wp_unslash($_POST['acquisition_source'] ?? '')), 0, 200),
             'success_message' => sanitize_text_field(wp_unslash($_POST['success_message'] ?? '')) ?: 'Thank you. Your information was received.',
             'error_message' => sanitize_text_field(wp_unslash($_POST['error_message'] ?? '')) ?: 'Please check your information and try again.',
@@ -156,6 +157,7 @@ final class EQW_Leads {
         $privacy = $cta['privacy_url'] ?: get_privacy_policy_url();
         if (!$privacy) { return '<p>Lead form unavailable: configure a privacy policy URL.</p>'; }
         $html = '<form class="eqw-lead-form" method="post" action="' . esc_url(admin_url('admin-ajax.php')) . '"><h2>' . esc_html($cta['title']) . '</h2>';
+        if (!empty($cta['cta_text'])) { $html .= '<p class="eqw-lead-cta-text">' . nl2br(esc_html($cta['cta_text'])) . '</p>'; }
         $html .= '<input type="hidden" name="action" value="eqw_submit_lead"><input type="hidden" name="cta_id" value="' . esc_attr($id) . '"><input type="hidden" name="nonce" value="' . esc_attr(wp_create_nonce('eqw_lead_' . $id)) . '"><input type="hidden" name="started" value="' . esc_attr((string) time()) . '"><input type="hidden" name="source_url" class="eqw-source-url" value=""><div class="eqw-honeypot" aria-hidden="true" style="position:absolute;left:-9999px"><label>Leave this blank<input name="website" tabindex="-1" autocomplete="off"></label></div>';
         $name_fields = '';
         $other_fields = '';
