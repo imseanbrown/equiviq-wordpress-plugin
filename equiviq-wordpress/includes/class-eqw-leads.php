@@ -156,7 +156,7 @@ final class EQW_Leads {
         wp_enqueue_script('eqw-leads', EQW_URL . 'assets/leads.js', array(), EQW_VERSION, true);
         $privacy = $cta['privacy_url'] ?: get_privacy_policy_url();
         if (!$privacy) { return '<p>Lead form unavailable: configure a privacy policy URL.</p>'; }
-        $html = '<form class="eqw-lead-form" method="post" action="' . esc_url(admin_url('admin-ajax.php')) . '"><h2>' . esc_html($cta['title']) . '</h2>';
+        $html = '<form class="eqw-lead-form" data-eqw-version="' . esc_attr(EQW_VERSION) . '" method="post" action="' . esc_url(admin_url('admin-ajax.php')) . '"><h2 class="wp-block-heading">' . esc_html($cta['title']) . '</h2>';
         if (!empty($cta['cta_text'])) { $html .= '<p class="eqw-lead-cta-text">' . nl2br(esc_html($cta['cta_text'])) . '</p>'; }
         $html .= '<input type="hidden" name="action" value="eqw_submit_lead"><input type="hidden" name="cta_id" value="' . esc_attr($id) . '"><input type="hidden" name="nonce" value="' . esc_attr(wp_create_nonce('eqw_lead_' . $id)) . '"><input type="hidden" name="started" value="' . esc_attr((string) time()) . '"><input type="hidden" name="source_url" class="eqw-source-url" value=""><div class="eqw-honeypot" aria-hidden="true" style="position:absolute;left:-9999px"><label>Leave this blank<input name="website" tabindex="-1" autocomplete="off"></label></div>';
         $name_fields = '';
@@ -177,7 +177,7 @@ final class EQW_Leads {
         if ($name_fields) { $html .= '<div class="eqw-lead-name-row">' . $name_fields . '</div>'; }
         $html .= $other_fields;
         if ($privacy) { $html .= '<p>By submitting, you opt in to contact. <a href="' . esc_url($privacy) . '" target="_blank" rel="noopener noreferrer">Privacy policy and opt-out</a></p>'; }
-        $html .= '<button type="submit">Submit</button><p class="eqw-lead-message" role="status" aria-live="polite"></p></form>';
+        $html .= '<button class="wp-element-button" type="submit">Submit</button><p class="eqw-lead-message" role="status" aria-live="polite"></p></form>';
         return $html;
     }
 
