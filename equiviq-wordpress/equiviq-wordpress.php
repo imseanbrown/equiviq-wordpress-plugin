@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Equiviq for Wordpress
  * Description: Wordpress CMS integration with Equiviq core modules
- * Version: 0.2.10
+ * Version: 0.2.11
  * Requires at least: 6.4
  * Requires PHP: 8.1
  * Author: Equiviq
@@ -12,7 +12,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('EQW_VERSION', '0.2.10');
+define('EQW_VERSION', '0.2.11');
 define('EQW_PATH', plugin_dir_path(__FILE__));
 define('EQW_URL', plugin_dir_url(__FILE__));
 
@@ -30,6 +30,7 @@ add_action('admin_menu', array('EQW_Admin', 'menu'));
 add_action('admin_head', array('EQW_Admin', 'menu_icon_style'));
 add_action('admin_menu', array('EQW_Leads', 'menu'));
 add_action('admin_post_eqw_save_cta', array('EQW_Leads', 'save_cta'));
+add_action('admin_post_eqw_save_lead_settings', array('EQW_Leads', 'save_lead_settings'));
 add_action('admin_post_eqw_delete_cta', array('EQW_Leads', 'delete_cta'));
 add_action('admin_post_eqw_retry_leads', array('EQW_Leads', 'retry_now'));
 add_action('wp_ajax_eqw_submit_lead', array('EQW_Leads', 'submit'));

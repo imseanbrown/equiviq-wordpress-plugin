@@ -21,6 +21,7 @@ jobs:
           php tests/updater.php
           php tests/lead-theme.php
           php tests/lead-route.php
+          php tests/lead-policy.php
           zip -qr "equiviq-wordpress-${version}.zip" equiviq-wordpress
       - name: Publish installable ZIP
         env:

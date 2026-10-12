@@ -53,6 +53,20 @@ final class EQW_Leads {
         return is_array($value) ? $value : array();
     }
 
+    private static function block_free_email_domains(): bool {
+        return get_option('eqw_block_free_email_domains', 'yes') !== 'no';
+    }
+
+    public static function save_lead_settings(): void {
+        if (!current_user_can('manage_options')) { wp_die('Forbidden', '', 403); }
+        check_admin_referer('eqw_save_lead_settings');
+        $choice = sanitize_key(wp_unslash($_POST['block_free_email_domains'] ?? ''));
+        if (!in_array($choice, array('yes', 'no'), true)) { wp_die('Invalid setting', '', 400); }
+        update_option('eqw_block_free_email_domains', $choice, false);
+        wp_safe_redirect(add_query_arg('settings_saved', '1', admin_url('admin.php?page=equiviq-leads')));
+        exit;
+    }
+
     private static function lead_url(string $suffix): string {
         $guides = EQW_Connection::api_url();
         return $guides && preg_match('~/guides$~', $guides) ? substr($guides, 0, -6) . $suffix : '';
@@ -78,6 +92,10 @@ final class EQW_Leads {
         $edit = sanitize_key(wp_unslash($_GET['edit'] ?? ''));
         $cta = $ctas[$edit] ?? array();
         echo '<div class="wrap"><h1>Equiviq Lead Generation</h1><p>Configure a call to action, then place its shortcode on a page. WordPress hosts the form and forwards submissions to Equiviq using the saved Equiviq API key.</p>';
+        if (isset($_GET['settings_saved'])) { echo '<div class="notice notice-success"><p>Lead generation settings saved.</p></div>'; }
+        echo '<h2>Settings</h2><form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
+        wp_nonce_field('eqw_save_lead_settings');
+        echo '<input type="hidden" name="action" value="eqw_save_lead_settings"><label for="eqw-block-free-email-domains">Block free email domains</label> <select id="eqw-block-free-email-domains" name="block_free_email_domains"><option value="yes"' . selected(self::block_free_email_domains(), true, false) . '>Yes</option><option value="no"' . selected(self::block_free_email_domains(), false, false) . '>No</option></select><p class="description">When No, free-domain submissions create or update a person without creating or assigning an organization.</p><p><button class="button button-primary">Save settings</button></p></form>';
         if (isset($_GET['saved'])) { echo '<div class="notice notice-success"><p>Call to action saved.</p></div>'; }
         echo '<h2>Calls to action</h2><table class="widefat striped"><thead><tr><th>Heading</th><th>Shortcode</th><th>Actions</th></tr></thead><tbody>';
         foreach ($ctas as $id => $entry) {
@@ -227,11 +245,11 @@ final class EQW_Leads {
         if (!empty($_POST['website']) || $elapsed < 2 || $elapsed > DAY_IN_SECONDS) { wp_send_json_error(array('message' => $cta['error_message']), 422); }
         $email = sanitize_email(wp_unslash($_POST['email'] ?? ''));
         if (!is_email($email)) { wp_send_json_error(array('message' => 'Enter a valid work email address.'), 422); }
-        $checked = self::send('lead-email-check', array('email' => $email));
+        $checked = self::send('lead-email-check', array('email' => $email, 'block_free_email_domains' => self::block_free_email_domains()));
         if ($checked['status'] === 200 && empty($checked['data']['allowed'])) { wp_send_json_error(array('message' => 'Please use your work email address'), 422); }
         if ($checked['status'] !== 200) { wp_send_json_error(array('message' => $checked['message'] ?: $cta['error_message']), 503); }
         $body = array('submission_id' => wp_generate_uuid4(), 'cta_id' => $id, 'email' => $email,
-            'acquisition_source' => $cta['acquisition_source']);
+            'acquisition_source' => $cta['acquisition_source'], 'block_free_email_domains' => self::block_free_email_domains());
         foreach (array('given_name', 'surname') as $field) {
             if (empty($cta['fields'][$field]['visible'])) { continue; }
             $value = sanitize_text_field(wp_unslash($_POST[$field] ?? ''));
