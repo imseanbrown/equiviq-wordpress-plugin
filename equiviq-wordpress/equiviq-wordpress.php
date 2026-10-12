@@ -7,7 +7,7 @@
  * Requires PHP: 8.1
  * Author: Equiviq
  * Text Domain: equiviq-wordpress
- * Update URI: https://github.com/imseanbrown/equiviq-wordpress-plugin
+ * Update URI: https://github.com/imseanbrown/wordpress-equiviq
  */
 
 if (!defined('ABSPATH')) { exit; }

@@ -3,8 +3,8 @@ if (!defined('ABSPATH')) { exit; }
 
 /** Supplies GitHub release metadata to WordPress's standard plugin updater. */
 final class EQW_Updater {
-    private const REPOSITORY = 'imseanbrown/equiviq-wordpress-plugin';
-    private const UPDATE_URI = 'https://github.com/imseanbrown/equiviq-wordpress-plugin';
+    private const REPOSITORY = 'imseanbrown/wordpress-equiviq';
+    private const UPDATE_URI = 'https://github.com/imseanbrown/wordpress-equiviq';
 
     public static function check($update, array $plugin_data, string $plugin_file, array $locales) {
         if ($plugin_file !== plugin_basename(EQW_PATH . 'equiviq-wordpress.php') ||

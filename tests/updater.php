@@ -14,21 +14,21 @@ function wp_remote_retrieve_body($value) { return $value['body']; }
 function wp_remote_retrieve_header($value, $name) { return $value['headers'][$name] ?? ''; }
 function wp_remote_get($url, $options) {
     $GLOBALS['request_count'] = ($GLOBALS['request_count'] ?? 0) + 1;
-    if ($url === 'https://api.github.com/repos/imseanbrown/equiviq-wordpress-plugin/releases/latest') {
+    if ($url === 'https://api.github.com/repos/imseanbrown/wordpress-equiviq/releases/latest') {
         return array('status' => $GLOBALS['api_status'] ?? 200, 'body' => json_encode($GLOBALS['remote_release']));
     }
-    if ($url === 'https://github.com/imseanbrown/equiviq-wordpress-plugin/releases/latest') {
+    if ($url === 'https://github.com/imseanbrown/wordpress-equiviq/releases/latest') {
         return array('status' => 302, 'headers' => array('location' => $GLOBALS['redirect_location'] ?? ''));
     }
     throw new RuntimeException('Unexpected update source');
 }
 require dirname(__DIR__) . '/equiviq-wordpress/includes/class-eqw-updater.php';
-$plugin = array('UpdateURI' => 'https://github.com/imseanbrown/equiviq-wordpress-plugin');
+$plugin = array('UpdateURI' => 'https://github.com/imseanbrown/wordpress-equiviq');
 $file = 'equiviq-wordpress/equiviq-wordpress.php';
 $newer = '99.99.99';
 $GLOBALS['remote_release'] = array('tag_name' => 'v' . $newer, 'assets' => array(array(
     'name' => 'equiviq-wordpress-' . $newer . '.zip',
-    'browser_download_url' => 'https://github.com/imseanbrown/equiviq-wordpress-plugin/releases/download/v' . $newer . '/equiviq-wordpress-' . $newer . '.zip',
+    'browser_download_url' => 'https://github.com/imseanbrown/wordpress-equiviq/releases/download/v' . $newer . '/equiviq-wordpress-' . $newer . '.zip',
 )));
 $update = EQW_Updater::check(false, $plugin, $file, array('en_US'));
 if (!is_array($update) || $update['version'] !== $newer || !str_ends_with($update['package'], '.zip')) throw new RuntimeException('A newer release was not offered');
@@ -38,7 +38,7 @@ if (EQW_Updater::check(false, $plugin, $file, array()) !== false) throw new Runt
 $GLOBALS['remote_release'] = array('tag_name' => 'v' . $newer, 'assets' => array(array('name' => 'equiviq-wordpress-' . $newer . '.zip', 'browser_download_url' => 'https://example.test/bad.zip')));
 if (EQW_Updater::check(false, $plugin, $file, array()) !== false) throw new RuntimeException('Untrusted ZIP host was accepted');
 $GLOBALS['api_status'] = 403;
-$GLOBALS['redirect_location'] = 'https://github.com/imseanbrown/equiviq-wordpress-plugin/releases/tag/v' . $newer;
+$GLOBALS['redirect_location'] = 'https://github.com/imseanbrown/wordpress-equiviq/releases/tag/v' . $newer;
 $update = EQW_Updater::check(false, $plugin, $file, array());
 if (!is_array($update) || $update['version'] !== $newer) throw new RuntimeException('GitHub redirect fallback did not offer the release');
 $GLOBALS['redirect_location'] = 'https://example.test/releases/tag/v' . $newer;

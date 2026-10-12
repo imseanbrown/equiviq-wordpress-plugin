@@ -4,7 +4,7 @@ This repository contains only the installable WordPress site plugin. The Equiviq
 
 ## Install
 
-Download the `equiviq-wordpress-<version>.zip` asset from the [latest release](https://github.com/imseanbrown/equiviq-wordpress-plugin/releases/latest). In WordPress, use **Plugins → Add New → Upload Plugin**. Configure the Equiviq API URL and key under **Equiviq → Connection settings**. See [the plugin guide](equiviq-wordpress/README.txt) for setup details.
+Download the `equiviq-wordpress-<version>.zip` asset from the [latest release](https://github.com/imseanbrown/wordpress-equiviq/releases/latest). In WordPress, use **Plugins → Add New → Upload Plugin**. Configure the Equiviq API URL and key under **Equiviq → Connection settings**. See [the plugin guide](equiviq-wordpress/README.txt) for setup details.
 
 ## Updates
 
