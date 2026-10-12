@@ -27,7 +27,7 @@ foreach (array('data-eqw-version="' . EQW_VERSION . '"', '<h2 class="wp-block-he
     if (!str_contains($html, $expected)) throw new RuntimeException('Missing theme markup: ' . $expected);
 }
 $css = file_get_contents(dirname(__DIR__) . '/equiviq-wordpress/assets/leads.css');
-if (str_contains($css, 'max-width: 38rem') || preg_match('/(?:font-size|background|border-color|#[0-9a-f]{3,8})\s*:/i', $css)) {
+if (str_contains($css, 'max-width: 38rem') || preg_match('/(?:font(?:-[a-z-]+)?|color|background|border(?:-[a-z-]+)?|#[0-9a-f]{3,8})\s*:/i', $css)) {
     throw new RuntimeException('Lead layout stylesheet still overrides theme presentation');
 }
 echo "WORDPRESS_LEAD_THEME_QA_OK\n";

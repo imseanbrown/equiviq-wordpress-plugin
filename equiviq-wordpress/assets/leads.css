@@ -1,8 +1,7 @@
-.eqw-lead-form { display: grid; gap: .65rem; font-family: inherit; }
+.eqw-lead-form { display: grid; gap: .65rem; }
 .eqw-lead-name-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
 .eqw-lead-name-row > :only-child { grid-column: 1 / -1; }
 .eqw-lead-field { display: grid; min-width: 0; }
 .eqw-lead-phone { grid-template-columns: minmax(6.5rem, 30%) minmax(0, 1fr); gap: .5rem; }
-.eqw-lead-field input, .eqw-lead-field select { box-sizing: border-box; min-width: 0; width: 100%; font-family: inherit; }
-.eqw-lead-form button { font-family: inherit; }
+.eqw-lead-field input, .eqw-lead-field select { box-sizing: border-box; min-width: 0; width: 100%; }
 @media (max-width: 25rem) { .eqw-lead-name-row { grid-template-columns: 1fr; } }

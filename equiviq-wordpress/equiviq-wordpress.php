@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Equiviq for Wordpress
  * Description: Wordpress CMS integration with Equiviq core modules
- * Version: 0.2.8
+ * Version: 0.2.9
  * Requires at least: 6.4
  * Requires PHP: 8.1
  * Author: Equiviq
@@ -12,7 +12,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('EQW_VERSION', '0.2.8');
+define('EQW_VERSION', '0.2.9');
 define('EQW_PATH', plugin_dir_path(__FILE__));
 define('EQW_URL', plugin_dir_url(__FILE__));
 
