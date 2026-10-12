@@ -20,6 +20,7 @@ jobs:
           find equiviq-wordpress -name '*.php' -print0 | xargs -0 -n1 php -l
           php tests/updater.php
           php tests/lead-theme.php
+          php tests/lead-route.php
           zip -qr "equiviq-wordpress-${version}.zip" equiviq-wordpress
       - name: Publish installable ZIP
         env:
