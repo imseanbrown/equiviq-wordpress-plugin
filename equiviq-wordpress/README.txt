@@ -10,9 +10,11 @@ INSTALL
    Plugins > Equiviq for Wordpress > Settings & setup.
 
 UPDATES
-Version 0.2.2 and later checks the public Equiviq WordPress plugin releases
-through WordPress's built-in updater. After installing 0.2.2 once, future
-versions appear under Plugins and Updates. Site administrators may enable
+Version 0.2.8 and later checks the public Equiviq WordPress plugin releases
+on every WordPress update check. Versions 0.2.2 through 0.2.7 cached release
+results for six hours; if an update does not appear, upload the latest ZIP once
+with Plugins > Add New > Upload Plugin and choose Replace current with uploaded.
+Future versions appear under Plugins and Updates. Site administrators may enable
 WordPress's normal auto-update control for this plugin. Only the installable
 equiviq-wordpress-<version>.zip release asset is used.
 

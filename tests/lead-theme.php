@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 define('ABSPATH', __DIR__);
-define('EQW_VERSION', '0.2.7');
+$plugin_source = file_get_contents(dirname(__DIR__) . '/equiviq-wordpress/equiviq-wordpress.php');
+if (!preg_match("/define\('EQW_VERSION', '([^']+)'\)/", $plugin_source, $version_match)) throw new RuntimeException('Plugin version missing');
+define('EQW_VERSION', $version_match[1]);
 define('EQW_URL', 'https://example.test/wp-content/plugins/equiviq-wordpress/');
 function sanitize_key($value) { return preg_replace('/[^a-z0-9_-]/', '', strtolower((string) $value)); }
 function get_option($key, $default = false) {
@@ -20,7 +22,7 @@ function admin_url($path) { return 'https://example.test/wp-admin/' . $path; }
 function wp_create_nonce($action) { return 'qa-nonce'; }
 require dirname(__DIR__) . '/equiviq-wordpress/includes/class-eqw-leads.php';
 $html = EQW_Leads::shortcode(array('id' => 'qa'));
-foreach (array('data-eqw-version="0.2.7"', '<h2 class="wp-block-heading">Contact us</h2>',
+foreach (array('data-eqw-version="' . EQW_VERSION . '"', '<h2 class="wp-block-heading">Contact us</h2>',
     '<button class="wp-element-button" type="submit">Submit</button>', 'eqw-lead-name-row', 'eqw-lead-phone') as $expected) {
     if (!str_contains($html, $expected)) throw new RuntimeException('Missing theme markup: ' . $expected);
 }

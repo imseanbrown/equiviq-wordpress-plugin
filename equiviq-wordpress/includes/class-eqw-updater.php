@@ -10,16 +10,29 @@ final class EQW_Updater {
         if ($plugin_file !== plugin_basename(EQW_PATH . 'equiviq-wordpress.php') ||
             ($plugin_data['UpdateURI'] ?? '') !== self::UPDATE_URI) { return $update; }
 
-        $release = get_transient('eqw_latest_release');
+        // WordPress already caches plugin update checks. A second release cache
+        // makes its "Check again" action return stale data for hours.
+        $response = wp_remote_get('https://api.github.com/repos/' . self::REPOSITORY . '/releases/latest', array(
+            'timeout' => 8, 'redirection' => 0,
+            'headers' => array('Accept' => 'application/vnd.github+json', 'User-Agent' => 'equiviq-wordpress/' . EQW_VERSION),
+        ));
+        $release = !is_wp_error($response) && (int) wp_remote_retrieve_response_code($response) === 200
+            ? json_decode(wp_remote_retrieve_body($response), true) : null;
         if (!is_array($release)) {
-            $response = wp_remote_get('https://api.github.com/repos/' . self::REPOSITORY . '/releases/latest', array(
+            // GitHub's public latest-release redirect avoids API rate limits.
+            $response = wp_remote_get(self::UPDATE_URI . '/releases/latest', array(
                 'timeout' => 8, 'redirection' => 0,
-                'headers' => array('Accept' => 'application/vnd.github+json', 'User-Agent' => 'equiviq-wordpress/' . EQW_VERSION),
+                'headers' => array('User-Agent' => 'equiviq-wordpress/' . EQW_VERSION),
             ));
-            if (is_wp_error($response) || (int) wp_remote_retrieve_response_code($response) !== 200) { return false; }
-            $release = json_decode(wp_remote_retrieve_body($response), true);
-            if (!is_array($release)) { return false; }
-            set_transient('eqw_latest_release', $release, 6 * HOUR_IN_SECONDS);
+            if (is_wp_error($response) || !in_array((int) wp_remote_retrieve_response_code($response), array(301, 302, 303, 307, 308), true)) { return false; }
+            $location = (string) wp_remote_retrieve_header($response, 'location');
+            if (!preg_match('~^' . preg_quote(self::UPDATE_URI, '~') . '/releases/tag/(v?\d+\.\d+\.\d+)$~D', $location, $redirect_match)) { return false; }
+            $tag = $redirect_match[1];
+            $version = ltrim($tag, 'v');
+            $release = array('tag_name' => $tag, 'assets' => array(array(
+                'name' => 'equiviq-wordpress-' . $version . '.zip',
+                'browser_download_url' => self::UPDATE_URI . '/releases/download/' . $tag . '/equiviq-wordpress-' . $version . '.zip',
+            )));
         }
 
         $tag = (string) ($release['tag_name'] ?? '');
