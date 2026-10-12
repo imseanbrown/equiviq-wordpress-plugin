@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "equiviq-wordpress/guides",
+  "title": "Equiviq Guides",
+  "category": "widgets",
+  "icon": "book-alt",
+  "description": "Searchable Equiviq Guides index with child article pages.",
+  "textdomain": "equiviq-wordpress",
+  "attributes": {
+    "heading": {"type":"string","default":"Guides & Resources"},
+    "filters": {"type":"object","default":{}},
+    "calloutStyle": {"type":"string","default":"equiviq"},
+    "classification": {"type":"object","default":{}},
+    "metadata": {"type":"object","default":{}}
+  },
+  "supports": {"html":false,"multiple":true}
+}
